@@ -1,0 +1,7 @@
+- name: Installing Docker.
+  hosts: web
+  become: true
+  become_method: sudo 
+  roles:
+    - roles/Docker
+    - roles/compose

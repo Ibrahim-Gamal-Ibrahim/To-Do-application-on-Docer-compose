@@ -1,0 +1,51 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      # 🔹 1. Checkout repo
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      # 🔹 2. Login to DockerHub
+      - name: Login to DockerHub
+        run: echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
+
+      # 🔹 3. Build Docker image
+      - name: Build Image
+        run: docker build -t ${{ secrets.DOCKER_USERNAME }}/todo-app:latest ./app/
+
+      # 🔹 4. Push Docker image
+      - name: Push Image
+        run: docker push ${{ secrets.DOCKER_USERNAME }}/todo-app:latest
+
+      # 🔹 5. Install Ansible
+      - name: Install Ansible
+        run: |
+          sudo apt update
+          sudo apt install -y ansible
+
+      # 🔹 6. Setup SSH for Ansible
+      - name: Setup SSH
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.SSH_KEY }}" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          ssh-keyscan -H ${{ secrets.SERVER_IP }} >> ~/.ssh/known_hosts
+
+      # 🔹 7. Create Inventory
+      #- name: Create Inventory
+      #  run: |
+      #    echo "[web]" > inventory.ini
+      #    echo "${{ secrets.SERVER_IP }} ansible_user=ubuntu ansible_ssh_private_key_file=~/.ssh/id_rsa" >> inventory.ini
+
+      # 🔹 8. Run Ansible Playbook
+      - name: Run Ansible
+        run: |
+          ansible-playbook -i infra/ansible/inventory/production/hosts infra/ansible/playbook.yml
