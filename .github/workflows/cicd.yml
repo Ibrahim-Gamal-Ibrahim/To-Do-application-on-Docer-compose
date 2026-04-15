@@ -36,7 +36,7 @@ jobs:
         run: |
           mkdir -p ~/.ssh
           echo "${{ secrets.SSH_KEY }}" > ~/.ssh/us-ubuntu-key.pem
-          chmod 600 ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/us-ubuntu-key.pem
           ssh-keyscan -H ${{ secrets.SERVER_IP }} >> ~/.ssh/known_hosts
 
       # 🔹 7. Create Inventory
