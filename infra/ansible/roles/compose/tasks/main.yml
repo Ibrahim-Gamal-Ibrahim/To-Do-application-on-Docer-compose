@@ -6,7 +6,13 @@
     src: ../../compose.yml
     dest: /home/ubuntu/compose.yml
 
+- name: Copy the .env file for the docker-compose.
+  copy:
+    src: ../../.env
+    dest: /home/ubuntu/.env
+
 - name: Run compose
   community.docker.docker_compose_v2:
     project_src: /home/ubuntu
+    #env_files: .env
     state: present
