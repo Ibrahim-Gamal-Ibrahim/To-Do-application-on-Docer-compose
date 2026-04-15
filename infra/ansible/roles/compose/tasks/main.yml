@@ -11,8 +11,14 @@
     src: ../../.env
     dest: /home/ubuntu/.env
 
+- name: Copy the nginx cofiguration file to beside the docker-compose file.
+  copy:
+    src: ../../nginx/
+    dest: /home/ubuntu/nginx/
+
 - name: Run compose
   community.docker.docker_compose_v2:
     project_src: /home/ubuntu
     #env_files: .env
     state: present
+    pull: always
