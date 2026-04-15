@@ -7,6 +7,6 @@
     dest: /home/ubuntu/compose.yml
 
 - name: Run compose
-  community.docker.docker_compose:
+  community.docker.docker_compose_v2:
     project_src: /home/ubuntu
     state: present
